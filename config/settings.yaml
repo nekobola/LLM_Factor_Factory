@@ -1,0 +1,87 @@
+# FactorFactory AI 配置文件
+
+# 数据源配置
+data:
+  # 默认数据源: tushare, akshare, yfinance
+  default_source: "akshare"
+
+  # Tushare 配置
+  tushare:
+    token: "${TUSHARE_TOKEN}"
+    disable_proxy: true  # 禁用代理避免连接问题
+
+  # AkShare 配置 (免费，无需 token)
+  akshare:
+    # 无需配置
+
+  # YFinance 配置 (免费，无需 token)
+  yfinance:
+    # 无需配置
+
+  # 数据缓存
+  cache:
+    enabled: true
+    dir: ".cache/data"
+    max_age_days: 7
+
+# 因子验证配置
+validation:
+  # IC 阈值
+  ic_mean_min: 0.02
+  ic_ir_min: 0.5
+
+  # 分组测试
+  n_groups: 5
+  monotonicity_min: 0.8
+
+  # 正交化
+  ortho_retention_min: 0.5
+
+  # 稳健性
+  nw_pvalue_max: 0.05
+
+# LLM 配置
+llm:
+  # 默认提供商: anthropic, openai
+  default_provider: "openai"
+
+  anthropic:
+    model: "claude-sonnet-4-20250514"
+    api_key: "${ANTHROPIC_API_KEY}"
+    temperature: 0.7
+    max_tokens: 4096
+
+  # OpenAI 兼容接口配置 (支持自定义 base_url)
+  openai:
+    model: "Qwen/Qwen3-Next-80B-A3B-Instruct"
+    api_key: "${OPENAI_API_KEY}"
+    base_url: "${OPENAI_BASE_URL}"  # http://10.13.66.5:20165/v1
+    temperature: 0.7
+    max_tokens: 4096
+
+# Pipeline 配置
+pipeline:
+  max_iterations: 5
+  auto_fix: true
+  parallel: false
+
+# 存储配置
+storage:
+  # 数据库路径
+  db_path: "~/.factor_factory/factors.db"
+
+  # 向量存储（可选）
+  vector_store:
+    enabled: false
+    type: "chromadb"
+    path: "~/.factor_factory/vectors"
+
+# Web 界面配置
+web:
+  host: "localhost"
+  port: 8501
+  theme: "light"
+
+# 代理配置 (如需禁用代理)
+proxy:
+  disable: true
