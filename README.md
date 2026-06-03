@@ -154,7 +154,7 @@ python main.py generate "构建20日动量因子，IC期望大于0.03"
 python main.py validate --factor-file factors/my_factor.py
 ```
 
-执行后终端输出流程日志，最终打印验证结果：IC 均值、IC IR、单调性得分、Newey-West p 值，以及通过/未通过判定。
+执行后终端输出流程日志，最终打印验证结果（IC 均值、IC IR）。若所有指标达标则输出 `Factor generated`，未达标则在最大迭代次数内 LLM 自动修正重试。
 
 ### Web 模式（交互式工作台）
 
@@ -184,7 +184,6 @@ streamlit run web/app.py
 ```
 Factor generated: momentum_20d
 IC: 0.0384, IR: 0.72
-Validation passed: True
 ```
 
 Web 端则展示完整的验证仪表盘：IC 时序图、IC 分布直方图、IC 衰减曲线、分组收益柱状图、多空净值曲线。
@@ -194,7 +193,7 @@ Web 端则展示完整的验证仪表盘：IC 时序图、IC 分布直方图、I
 在 Web 回测页面运行后，产出两列面板：
 
 - **绩效指标卡片** — 年化收益、夏普比率、最大回撤、胜率
-- **净值曲线** — 策略净值 vs 基准，回撤曲线
+- **净值曲线** — 策略净值曲线，含最大回撤标注
 - **分组净值** — 各分组的累计收益曲线，用于检验单调性
 - **换仓统计** — 平均换手率、单次换仓成本
 
