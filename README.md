@@ -17,13 +17,14 @@ FactorFactory AI 是一个**量化因子挖掘自动化工具**——你描述�
 
 **能力范围：**
 - 自然语言输入 —— 用中文描述因子逻辑，无需手写计算代码
-- 自动化挖掘 —— 给定方向（如动量、反转、波动率），AI 生成大量候选因子并筛选最优
+- 自动化挖掘 —— 给定方向（如动量、反转、波动率），AI 生成候选因子并筛选
 - 严格验证 —— 五维验证体系（IC/IR 分析、分组回测、正交化检验、Newey-West 稳健性检验、单调性评分），拒绝简单回测
 - 策略构建 —— 通过验证的因子可导出为分组轮动策略，含交易成本建模
 
 **当前局限：**
 - 历史显著性不等于未来收益，本系统定位为研究辅助工具
 - 不直接下达交易指令，不连接券商接口
+- 五维统计验证仅通过 CLI (`python main.py generate`) 触发；Web 端的因子保存和验证看板不执行统计检验，仅展示已入库的验证指标数值
 
 ## 全局流程
 
@@ -207,7 +208,7 @@ Web 端验证看板以因子列表形式展示：每条因子可展开查看 IC 
 |------|------|
 | `python main.py generate <prompt>` | 从自然语言描述生成因子，支持 `--max-iterations` |
 | `python main.py evolve` | 遗传编程进化搜索，支持 `--generations` |
-| `python main.py validate --factor-file <path>` | 从代码文件验证因子 |
+| `python main.py validate --factor-file <path>` | 从代码文件验证因子（开发中） |
 | `python main.py web` | 启动 Streamlit Web 界面 |
 
 全局参数：`--config` 指定配置文件，`-v` 详细输出。
@@ -229,14 +230,13 @@ Web 端验证看板以因子列表形式展示：每条因子可展开查看 IC 
 ```
 fineconometrics_factors_mining/
 ├── main.py                    # CLI 入口
-├── factor_factory/
-│   ├── core/                  # BaseFactor 抽象基类, Pipeline, Registry
-│   ├── data_engine/           # 数据加载器 (Tushare/AkShare/YFinance)
-│   ├── idea_generator/        # LLM 客户端, Prompt, 表达式解析, 代码修正
-│   ├── validator/             # IC/IR, 分组测试, 正交化, Newey-West
-│   ├── strategy_builder/      # 回测引擎, 情景配置
-│   ├── storage/               # SQLAlchemy ORM
-│   └── web/                   # Streamlit 前端
+├── core/                      # BaseFactor 抽象基类, Pipeline, Registry
+├── data_engine/               # 数据加载器 (Tushare/AkShare/YFinance)
+├── idea_generator/            # LLM 客户端, Prompt, 表达式解析, 代码修正
+├── validator/                 # IC/IR, 分组测试, 正交化, Newey-West
+├── strategy_builder/          # 回测引擎, 情景配置
+├── storage/                   # SQLAlchemy ORM
+├── web/                       # Streamlit 前端 + 图表组件
 ├── config/                    # YAML 配置文件
 ├── tests/                     # 测试套件
 └── requirements.txt
@@ -249,13 +249,13 @@ fineconometrics_factors_mining/
 pytest tests/ -v
 
 # 覆盖率
-pytest tests/ -v --cov=factor_factory
+pytest tests/ -v --cov=core --cov=validator --cov=idea_generator --cov=strategy_builder
 
 # 格式化
-ruff check factor_factory/ && black factor_factory/
+ruff check . && black .
 
 # 类型检查
-mypy factor_factory/
+mypy core/ validator/ idea_generator/ strategy_builder/ web/
 ```
 
 ## 技术栈
